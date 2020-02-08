@@ -1,26 +1,38 @@
-#
 #   M Wes-J
-#   
+#
 #   Created: Jan 30th, 2020
 #
 #   Shape Detection with Fourier Descriptors
 
-import numpy as np
 import cv2 as cv
+import numpy as np
 import matplotlib.pyplot as plt
 
+plt.rcParams.update({"figure.max_open_warning": 0})
 
-
-def importImg(file):
-    img = cv.imread(file)
+# OPEN IMAGE
+#   params:
+#     file  = image filename
+#     color = import color scheme
+#   return:
+#     img   = image variable
+def importImg(file, color):
+    img = cv.imread(file, color)
     return img
 
-def showImg(img):
-    plt.title('OG img')
-    plt.imshow(img, cmap='gray', interpolation='nearest') # nearest, bilinear, bicubic
+
+# SHOW IMAGE
+#   params:
+#     img   = image variable
+#     color = import color scheme
+def showImg(img, color):
+    plt.title("OG img")
+    plt.imshow(img, cmap="gray", interpolation="bicubic")
+    # nearest, bilinear, bicubictt
+
 
 def showCircle(xx, yy, radius):
-    circle = plt.Circle((xx, yy), radius, color='r', fill=False)
+    circle = plt.Circle((xx, yy), radius, color="r", fill=False)
     plt.gcf().gca().add_artist(circle)
 
 def hist(img):
@@ -31,33 +43,38 @@ def hist(img):
         if hist[i] > 0:
             print(i, ':', hist[i])
 
+def showLine(xStart, yStart, xEnd, yEnd):
+    plt.plot([xStart, xEnd], [yStart, yEnd], linewidth=1, ls="dashed", color="r", marker="o", ms=2.5)
 
 
-########################################################################################################################
-
+#################################################################################
 
 
 # To show the results
 plt.figure()
 
-f = 'shapes.jpg'
-img = importImg(f)
-# """
+f = "shapes.jpg"
+color = 0  # gray=0, BGR=1
+img = importImg(f, color)
 
-mask = cv.Canny(img, 200, 0)
-hist(mask)
+# ""
 
-# while (len(np.where(img == 255)[0])):
-#     shape = []
-#     y = list(np.where(img == 255))[0]
-#     print(len(y))
+# Create Circle:
+edges = cv.Canny(img, 100, 200)  # TODO: what is 100 & 200 ?
+print(type(edges[0][0]))
+print(np.shape(edges))
+# e = np.ndarray(np.shape(edges)[0], np.shape(edges)[1], dtype=np.uint8)
+# e[:,:,3] = (edges[:,:,0] > 250)
 
-# """
-plt.subplot(1,2,1)
-showImg(img)
+# Fourier Descriptor - [c]
+c = []
 
-plt.subplot(1,2,2)
-showImg(mask)
+# ""
 
-
+showImg(img, color)
+showImg(edges, color)
+showCircle(0, 0, 100)
+showCircle(250, 250, 100)
+showLine(250, 250, 25, 25)
 plt.show()
+#plt.savefig("figure.png")
